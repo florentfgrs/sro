@@ -6,7 +6,7 @@
         <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
         <link rel="stylesheet" href="css/leaflet-search.css">
         <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
@@ -24,7 +24,7 @@
         <div id="map">
         </div>
         <script src="js/qgis2web_expressions.js"></script>
-        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
         <script src="js/leaflet.rotatedMarker.js"></script>
         <script src="js/leaflet.pattern.js"></script>
         <script src="js/leaflet-hash.js"></script>
@@ -42,6 +42,7 @@
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
             if (bounds_group.getLayers().length) {
@@ -64,27 +65,19 @@
         function pop_sro_1(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['st_code'] !== null ? autolinker.link(feature.properties['st_code'].toLocaleString()) : '') + '</td>\
+                        <center><h1>' + (feature.properties['nd_r4_code'] !== null ? autolinker.link(feature.properties['nd_r4_code'].toLocaleString()) : '') + '</h1></center>\
                     </tr>\
                     <tr>\
-                        <td colspan="2"><strong>nd_r4_code</strong><br />' + (feature.properties['nd_r4_code'] !== null ? autolinker.link(feature.properties['nd_r4_code'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">st_typelog</th>\
-                        <td>' + (feature.properties['st_typelog'] !== null ? autolinker.link(feature.properties['st_typelog'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">st_statut</th>\
-                        <td>' + (feature.properties['st_statut'] !== null ? autolinker.link(feature.properties['st_statut'].toLocaleString()) : '') + '</td>\
+                        <center><h2>' + (feature.properties['st_statut'] !== null ? autolinker.link(feature.properties['st_statut'].toLocaleString()) : '') + '</h2></center>\
                     </tr>\
                 </table>';
-            layer.bindPopup(popupContent, {maxHeight: 400});
+            layer.bindPopup(popupContent, {maxHeight: 250});
         }
 
         function style_sro_1_0() {
             return {
                 pane: 'pane_sro_1',
-                radius: 8.0,
+                radius: 6.0,
                 opacity: 1,
                 color: 'rgba(128,17,25,1.0)',
                 dashArray: '',
@@ -142,13 +135,26 @@
                 }
         });
         setBounds();
+
+        // var pointLayer = L.geoJSON(null, {
+        // pointToLayer: function(feature,latlng){
+        //     label = String(feature.properties['nd_r4_code']) // Must convert to string, .bindTooltip can't use straight 'feature.properties.attribute'
+        //     return new L.CircleMarker(latlng, {
+        //     radius: 1,
+        //     }).bindTooltip(label, {permanent: true, opacity: 1}).openTooltip();
+        //     }
+        // });
+        // pointLayer.addData(json_sro_1);
+        // map.addLayer(pointLayer);
+
+
         var i = 0;
         layer_sro_1.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['nd_r4_code'] !== null?String('<div style="color: #ba0000; font-size: 10pt; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['nd_r4_code']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_sro_1'});
+            layer.bindTooltip((layer.feature.properties['nd_r4_code'] !== null?String('<div style="color: #ba0000; font-size: 12pt; font-weight: bold; font-family: \'MS Shell Dlg 2\', sans-serif;">' + layer.feature.properties['nd_r4_code']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_sro_1'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
@@ -183,6 +189,8 @@
         map.on("layerremove", function(){
             resetLabels([layer_sro_1]);
         });
+
+
         </script>
     </body>
 </html>
